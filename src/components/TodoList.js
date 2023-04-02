@@ -2,17 +2,18 @@ import React, { useState, useEffect } from "react";
 import { Table } from "antd";
 import TodoService from "../services/todoService";
 
-export default function TodoList({status}) {
+export default function TodoList({status, refreshTodoList, setRefreshTodoList}) {
   const [tableData, setTableData] = useState([]);
 
   const columns = [
     {
       title: "ID",
-      dataIndex: "id",
+      dataIndex: "_id",
       key: "id",
+      width: "20%"
     },
     {
-      title: "Todo",
+      title: "Name",
       dataIndex: "name",
       key: "name",
     },
@@ -30,11 +31,13 @@ export default function TodoList({status}) {
 
   useEffect(() => {
       listTodos()
-  }, []);
+  }, [refreshTodoList]);
 
   const listTodos = async () => {
-    const rawdata = TodoService.listTodo(status);
-    console.log(rawdata)
+    const rawdata = await TodoService.listTodo(status);
+    const data = rawdata.data.data
+    setTableData(data)
+    setRefreshTodoList(false);
   }
 
   return (
