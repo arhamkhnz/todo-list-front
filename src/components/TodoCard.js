@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Card, Tabs, Button, Modal, Input, message } from "antd";
 import TodoList from "./TodoList";
 import TodoService from "../services/todoService";
+import TodoModal from "./TodoModal";
 
 const { TextArea } = Input;
 
@@ -85,35 +86,14 @@ export default function TodoCard() {
           items={tabItems}
           onChange={() => setRefreshTodoList(true)}
         />
-        <Modal
-          destroyOnClose={true}
-          title="Create Todo"
-          open={modalVisible}
-          onOk={() => createTodo()}
-          onCancel={() => handleCancel()}
-        >
-          <div>
-            <Input
-              showCount
-              maxLength={15}
-              placeholder="Name"
-              value={todo.name}
-              name="name"
-              onChange={handleInputChange}
-              style={{ marginBottom: "0.5rem" }}
-            />
-            <TextArea
-              showCount
-              maxLength={50}
-              placeholder="Description"
-              value={todo.description}
-              name="description"
-              onChange={handleInputChange}
-              rows={2}
-              style={{ marginBottom: "1.5rem" }}
-            />
-          </div>
-        </Modal>
+        <TodoModal
+          type="create"
+          visible={modalVisible}
+          handleOk={createTodo}
+          handleCancel={handleCancel}
+          todo={todo}
+          handleInputChange={handleInputChange}
+        />
       </Card>
     </div>
   );

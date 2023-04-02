@@ -12,7 +12,15 @@ const TodoService = {
 
   async deleteTodo(id) {
     return ApiService.post(`todo/delete/${id}`);
-  }
+  },
+
+  async getTodoDetail(id) {
+    return ApiService.get(`todo/id/${id}`);
+  },
+
+  async updateTodo(data) {
+    return ApiService.post(`todo/update`, data);
+  },
 
 }
 
