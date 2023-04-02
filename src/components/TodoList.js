@@ -97,7 +97,7 @@ export default function TodoList({
 
   const deleteTodo = async (id) => {
     const delTodo = await TodoService.deleteTodo(id);
-    if (delTodo.data.success == true) {
+    if (delTodo.data.success === true) {
       message.success("Successfully Deleted");
     } else {
       message.error("An Error Occured Please Try Again Later");
@@ -127,11 +127,11 @@ export default function TodoList({
   const updateTodo = async () => {
     const { name, description, status } = todo;
     todo.id = id
-    if (name == "" || description == "" || status == "") {
+    if (name === "" || description === "" || status === "") {
       message.error("Please Fill Out All The Fields");
     } else {
       const update = await TodoService.updateTodo(todo);
-      if (update.data.success == true) {
+      if (update.data.success === true) {
         message.success("Successfully Updated");
         setRefreshTodoList(true);
       } else {

@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import { Card, Tabs, Button, Modal, Input, message } from "antd";
+import { Card, Tabs, Button, message } from "antd";
 import TodoList from "./TodoList";
 import TodoService from "../services/todoService";
 import TodoModal from "./TodoModal";
-
-const { TextArea } = Input;
 
 export default function TodoCard() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -49,11 +47,11 @@ export default function TodoCard() {
 
   const createTodo = async () => {
     const { name, description } = todo;
-    if (name == "" || description == "") {
+    if (name === "" || description === "") {
       message.error("Please Fill Out All The Fields");
     } else {
       const add = await TodoService.addTodo(todo);
-      if (add.data.success == true) {
+      if (add.data.success === true) {
         message.success("Successfully Created");
         setRefreshTodoList(true);
       } else {
