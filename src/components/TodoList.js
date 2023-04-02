@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Button, Table, Modal, message, Spin } from "antd";
+import { Button, Table, Modal, message, Spin, Input } from "antd";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import TodoService from "../services/todoService";
 import TodoModal from "./TodoModal";
+import moment from "moment";
+import { SearchOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
 const { confirm } = Modal;
+const { Search } = Input;
 
 export default function TodoList({
   status,
@@ -15,6 +18,7 @@ export default function TodoList({
   const [loading, setLoading] = useState(false);
   const [id, setId] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
   const [todo, setTodo] = useState({
     name: "",
     description: "",
@@ -37,6 +41,13 @@ export default function TodoList({
       title: "Description",
       dataIndex: "description",
       key: "description",
+    },
+    {
+      title: "Created At",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      sorter: (a, b) => moment(a.createdAt).unix() - moment(b.createdAt).unix(),
+      render: (text) => moment(text).format("MMMM Do YYYY, h:mm:ss a"),
     },
     {
       title: "Status",
@@ -84,7 +95,7 @@ export default function TodoList({
   };
 
   const getTodoDetails = async (id) => {
-    setId(id)
+    setId(id);
     const rawdata = await TodoService.getTodoDetail(id);
     const data = rawdata.data.data;
     setTodo({
@@ -92,7 +103,7 @@ export default function TodoList({
       description: data.description,
       status: data.status,
     });
-    setModalVisible(true)
+    setModalVisible(true);
   };
 
   const deleteTodo = async (id) => {
@@ -126,7 +137,7 @@ export default function TodoList({
 
   const updateTodo = async () => {
     const { name, description, status } = todo;
-    todo.id = id
+    todo.id = id;
     if (name === "" || description === "" || status === "") {
       message.error("Please Fill Out All The Fields");
     } else {
@@ -147,9 +158,34 @@ export default function TodoList({
     setModalVisible(false);
   };
 
+  const handleSearch = (value) => {
+    // setSearchText(value);
+    const filteredData = tableData.filter((todo) =>
+      todo.name.toLowerCase().includes(value.toLowerCase())
+    );
+    setTableData(filteredData);
+  };
+
+  const handleClearSearch = () => {
+    setSearchValue(null)
+    listTodos(status)
+  };
+
   return (
     <>
       <Spin spinning={loading}>
+        <div>
+          <Search 
+            onChange={(e) => setSearchValue(e.target.value)}
+            value={searchValue}
+            allowClear
+            placeholder="Search"
+            onSearch={handleSearch}
+            style={{ width: 200, marginBottom: 16 }}
+            addonAfter={<CloseCircleOutlined onClick={handleClearSearch} style={{marginLeft: "5px", cursor: "pointer", fontSize: "16px"}} />}
+            enterButton
+          />
+        </div>
         <Table
           columns={columns}
           dataSource={tableData}
