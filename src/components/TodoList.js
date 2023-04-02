@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Table } from "antd";
+import { Button, Table, Modal, message } from "antd";
+import { ExclamationCircleFilled } from '@ant-design/icons';
 import TodoService from "../services/todoService";
+
+const { confirm } = Modal;
 
 export default function TodoList({status, refreshTodoList, setRefreshTodoList}) {
   const [tableData, setTableData] = useState([]);
@@ -10,7 +13,7 @@ export default function TodoList({status, refreshTodoList, setRefreshTodoList}) 
       title: "ID",
       dataIndex: "_id",
       key: "id",
-      width: "20%"
+      width: "20%",
     },
     {
       title: "Name",
@@ -27,18 +30,51 @@ export default function TodoList({status, refreshTodoList, setRefreshTodoList}) 
       dataIndex: "status",
       key: "status",
     },
+    {
+      title: "Action",
+      dataIndex: "_id",
+      key: "status",
+      width: "15%",
+      render: (id) => (
+        <>
+          <Button style={{margin: "1px"}} type="primary">Edit</Button>
+          <Button onClick={() => showConfirm(id)} style={{margin: "1px"}} type="primary" danger>Delete</Button>
+        </>
+      ),
+    },
   ];
 
   useEffect(() => {
-      listTodos()
+    listTodos();
   }, [refreshTodoList]);
 
   const listTodos = async () => {
     const rawdata = await TodoService.listTodo(status);
-    const data = rawdata.data.data
-    setTableData(data)
+    const data = rawdata.data.data;
+    setTableData(data);
     setRefreshTodoList(false);
+  };
+
+  const deleteTodo = async (id) => {
+    const delTodo = await TodoService.deleteTodo(id)
+    if(delTodo.data.success == true){
+      message.success("Successfully Deleted")
+    } else {
+      message.error("An Error Occured Please Try Again Later");
+    }
+    setRefreshTodoList(true)
   }
+
+  const showConfirm = (id) => {
+    confirm({
+      title: 'Do you Want to delete this Todo?',
+      icon: <ExclamationCircleFilled />,
+      onOk() {
+       deleteTodo(id)
+      },
+      onCancel() {}
+    });
+  };
 
   return (
     <Table

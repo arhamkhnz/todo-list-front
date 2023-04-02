@@ -8,6 +8,10 @@ const TodoService = {
 
   async addTodo(data) {
     return ApiService.post(`todo/add`, data);
+  },
+
+  async deleteTodo(id) {
+    return ApiService.post(`todo/delete/${id}`);
   }
 
 }
